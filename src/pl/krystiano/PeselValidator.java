@@ -5,29 +5,48 @@ public class PeselValidator {
     private byte PESEL[] = new byte[11];
     private boolean valid = false;
 
-    public PeselValidator() {
-    }
+    public PeselValidator(String peselNumber) {
+        //if (!isValid(peselNumber)) return;
 
-    public PeselValidator(String PESELNumber) {
-        if (PESELNumber.length() != 11) {
-            valid = false;
-        } else {
-            for (int i = 0; i < 11; i++) {
-                PESEL[i] = Byte.parseByte(PESELNumber.substring(i, i + 1));
-            }
-            if (checkSum() && checkMonth() && checkDay()) {
-                valid = true;
-            } else {
-                valid = false;
-            }
+        for (int i = 0; i < 11; i++) {
+            PESEL[i] = Byte.parseByte(peselNumber.substring(i, i + 1));
         }
     }
 
-    public boolean isValid() {
-        return valid;
+    public String buildBirthDate() {
+        StringBuffer birthDate = new StringBuffer();
+        String year, month, day;
+
+        year = String.valueOf(getBirthYear());
+        month = String.valueOf(getBirthMonth());
+        day = String.valueOf(getBirthDay());
+
+        month = validateMonthOrDay(month);
+        day = validateMonthOrDay(day);
+
+        birthDate.append(day);
+        birthDate.append(".");
+        birthDate.append(month);
+        birthDate.append(".");
+        birthDate.append(year);
+
+        return birthDate.toString();
     }
 
-    public int getBirthYear() {
+    private boolean isValid(String PESELNumber) {
+
+
+        if (PESELNumber.length() != 11) return false;
+
+        if (checkSum() && checkMonth() && checkDay()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    private int getBirthYear() {
         int year;
         int month;
         year = 10 * PESEL[0];
@@ -48,7 +67,7 @@ public class PeselValidator {
         return year;
     }
 
-    public int getBirthMonth() {
+    private int getBirthMonth() {
         int month;
         month = 10 * PESEL[2];
         month += PESEL[3];
@@ -61,18 +80,25 @@ public class PeselValidator {
         } else if (month > 60 && month < 73) {
             month -= 60;
         }
+
         return month;
     }
 
+    private String validateMonthOrDay(String monthOrDay) {
+        if (Integer.valueOf(monthOrDay) >= 10)
+            return monthOrDay;
+        else
+            return "0" + monthOrDay;
+    }
 
-    public int getBirthDay() {
+    private int getBirthDay() {
         int day;
         day = 10 * PESEL[4];
         day += PESEL[5];
         return day;
     }
 
-    public String getSex() {
+    private String getSex() {
         if (valid) {
             if (PESEL[9] % 2 == 1) {
                 return "Mezczyzna";
@@ -108,7 +134,6 @@ public class PeselValidator {
 
     private boolean checkMonth() {
         int month = getBirthMonth();
-        int day = getBirthDay();
         if (month > 0 && month < 13) {
             return true;
         } else {

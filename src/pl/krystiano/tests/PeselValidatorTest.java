@@ -8,7 +8,7 @@ public class PeselValidatorTest {
 
     @BeforeClass
     public static void createPeselValidatorObject() {
-        PeselValidator peselValidator = new PeselValidator();
+        PeselValidator peselValidator = new PeselValidator("92011230445");
     }
 
 }
